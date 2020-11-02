@@ -68,9 +68,30 @@ app.post('/usuario', function(req, res) {
 app.put('/usuario/:id', function(req, res) {
 
     let id = req.params.id;
-    res.json({
-        id
+    let body = req.body;
+
+    //La opción new:true hace que el usuario que se devuelve en el callback después de actualizar 'usuarioDB'
+    //sea el nuevo usuario ya actualizado
+    Usuario.findByIdAndUpdate(id, body, { new: true }, (err, usuarioDB) => {
+
+        //Si hay un error ponemos el return para que no siga ejecutando el código
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err: err
+            });
+        }
+
+        res.json({
+            ok: true,
+            mensaje: 'Usuario actualizado correctamente',
+            usuario: usuarioDB
+        });
     });
+
+    // res.json({
+    //     id
+    // });
 });
 
 app.delete('/usuario', function(req, res) {
