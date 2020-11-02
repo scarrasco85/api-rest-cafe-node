@@ -46,6 +46,22 @@ let usuarioSchema = new Schema({
         default: false
     }
 });
+
+//Así podemos modificar el método de un esquema. Modificamos el método .toJSON del esquema ya que éste siempre
+//se llama cuando va a imprimir la información en un JSON, es decir, se llama cuando se imprime una response. Así,
+//cuando se inserte un usuario y se imprime la response, eliminaremos el campo contraseña del objeto que se imprime
+usuarioSchema.methods.toJSON = function() {
+    //cogemos la información que esté llamando al método
+    let user = this;
+    //convertimos la información a un objeto para tener todas sus propiedades y métodos
+    let userObject = user.toObject();
+    //Ya convertido a un objeto podemos eliminar la propiedad 'password' del objeto usando delete
+    delete userObject.password;
+
+    //devolvemos el objeto que .toJSON va a imprimir sin la propiedad 'password'
+    return userObject;
+}
+
 //Aquí decimos a este esquema que use el plugin mongoose-unique-validator. En {PATH} mongoose inyectará el elemento
 //que esté marcado en el esquema como 'unique: true' y falte para mostrarlo en el mensaje de error. Es decir si
 //se repite un elemento que ya está introducido devolverá ese error. Ej: 'email debe ser único' ó 'dni debe ser único'

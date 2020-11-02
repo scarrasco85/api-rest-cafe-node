@@ -2,6 +2,8 @@ const express = require('express');
 //Aquí usamos la nomenclatura con 'Usuario' con mayúscula porque se usará para crear nuevos objetos del esquema
 //Usuario con la palabra reservada New
 const Usuario = require('../models/usuario');
+//módulo para encriptar contraseñas
+const bcrypt = require('bcrypt');
 
 const app = express();
 
@@ -17,7 +19,9 @@ app.post('/usuario', function(req, res) {
     let usuario = new Usuario({
         nombre: body.nombre,
         email: body.email,
-        password: body.password,
+        //.hashSync es una función sincrona, no es ni promesa ni callback. El primer parámetro es la contraseña
+        //que queremos encriptar y el segundo el número de vueltas que hará para encriptarla
+        password: bcrypt.hashSync(body.password, 10),
         role: body.role
     });
 
@@ -29,6 +33,13 @@ app.post('/usuario', function(req, res) {
                 err: err
             });
         }
+
+        //En la response ponemos la propiedad password a null para no mostrar información de la contraseña
+        //aunque esté encriptada en el objeto que devolvemos.Ésta sería una forma válida de no mostrar la contraseña
+        //pero mostraría el nombre del campo 'password'. Es mejor hacerlo como en el Schema 'models/usuario.js' donde
+        //modificamos el método toJSON para quitar la propiedad password de la respuesta antes de mostrarla
+        //usuarioDB.password = null;
+
         //Cuando sale bien en realidad podemos no mandar el status(200) ya que va implícito en la respuesta
         return res.status(200).json({
             ok: true,
