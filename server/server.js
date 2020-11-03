@@ -19,7 +19,8 @@ app.use(require('./routes/usuario'));
 //BDD conection
 mongoose.connect('mongodb://localhost:27017/cafe', {
         useNewUrlParser: true,
-        useUnifiedTopology: true
+        useUnifiedTopology: true,
+        useCreateIndex: true
     }).then((resp) => { console.log('Connected to Mongo!!'); })
     .catch((error) => { console.log('Error connecting to Mongo', error); });
 
