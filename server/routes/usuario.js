@@ -135,8 +135,35 @@ app.put('/usuario/:id', function(req, res) {
     // });
 });
 
-app.delete('/usuario', function(req, res) {
-    res.json('delete usuario');
+//Servicio que elimina un usuario por su id recibida por parámetro url
+app.delete('/usuario/:id', function(req, res) {
+
+    let id = req.params.id;
+
+    Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
+
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        }
+
+        if (!usuarioBorrado) {
+
+            return res.status(400).json({
+                ok: false,
+                err: {
+                    message: `Usuario con id: ${ id } no encontrado.`
+                }
+            });
+        }
+
+        res.json({
+            ok: true,
+            usuarioBorrado: usuarioBorrado
+        });
+    });
 });
 
 module.exports = app;
