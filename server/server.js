@@ -16,8 +16,8 @@ app.use(bodyParser.json());
 //Importaos y usamos las rutas para usuarios
 app.use(require('./routes/usuario'));
 
-//BDD conection
-mongoose.connect('mongodb://localhost:27017/cafe', {
+//BDD conection: URLDB lo hemos definido en el archivo /config/config.js
+mongoose.connect(process.env.URLDB, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true
