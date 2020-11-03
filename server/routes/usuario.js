@@ -9,9 +9,34 @@ const _ = require('underscore');
 
 const app = express();
 
-
+//Servicio que devuelve los usuarios de la base de datos con paginación y filtros pasados por parámetros opcionales
 app.get('/usuario', function(req, res) {
-    res.json('get usuario');
+    // res.json('get usuario');
+
+    //los parámetros opcionales vienen en req.query, si no viene el parámetro desde lo establecemos a cero para
+    //que se muestre desde el primer registro
+    let desde = req.query.desde || 0;
+    desde = Number(desde);
+    let muestraPorPagina = req.query.muestraPorPagina || 5;
+    muestraPorPagina = Number(muestraPorPagina);
+    //Con el método find definimos los filtros, si se pasa objeto vacío devolverá todos los usuarios de la colección
+    //.exec() ejecuta find({}) con el filtro definido
+    Usuario.find({})
+        .skip(desde) //Se salta el número de registros pasados por parámetro
+        .limit(muestraPorPagina) //Muestra los siguientes x registros pasados por parámetro
+        .exec((err, usuarios) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err: err
+                });
+            }
+
+            res.json({
+                ok: true,
+                usuarios: usuarios
+            });
+        });
 });
 
 app.post('/usuario', function(req, res) {
