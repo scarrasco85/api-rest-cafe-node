@@ -20,8 +20,10 @@ app.get('/usuario', function(req, res) {
     let muestraPorPagina = req.query.muestraPorPagina || 5;
     muestraPorPagina = Number(muestraPorPagina);
     //Con el método find definimos los filtros, si se pasa objeto vacío devolverá todos los usuarios de la colección
-    //.exec() ejecuta find({}) con el filtro definido
-    Usuario.find({})
+    //El segundo parámetro es una cadena de texto con los campos que queremos que devuelva la búsqueda, si no se
+    //denine ninguno devolverá todos los campos
+    //.exec() ejecuta find({}) con el filtro definido.
+    Usuario.find({}, 'nombre email role estado google img')
         .skip(desde) //Se salta el número de registros pasados por parámetro
         .limit(muestraPorPagina) //Muestra los siguientes x registros pasados por parámetro
         .exec((err, usuarios) => {
