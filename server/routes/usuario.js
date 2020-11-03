@@ -22,8 +22,8 @@ app.get('/usuario', function(req, res) {
     //Con el método find definimos los filtros, si se pasa objeto vacío devolverá todos los usuarios de la colección
     //El segundo parámetro es una cadena de texto con los campos que queremos que devuelva la búsqueda, si no se
     //denine ninguno devolverá todos los campos
-    //.exec() ejecuta find({}) con el filtro definido.
-    Usuario.find({}, 'nombre email role estado google img')
+    //.exec() ejecuta find({}) con el filtro definido. Aquí muestra sólo los usuario activos
+    Usuario.find({ estado: true }, 'nombre email role estado google img')
         .skip(desde) //Se salta el número de registros pasados por parámetro
         .limit(muestraPorPagina) //Muestra los siguientes x registros pasados por parámetro
         .exec((err, usuarios) => {
@@ -36,7 +36,7 @@ app.get('/usuario', function(req, res) {
 
             //Con .count() contamos la cantidad de registros que devuelve la búsqueda para el mismo filtro 
             //utilizado en .find({}), y lo añadimos también en la respuesta
-            Usuario.count({}, (err, conteo) => {
+            Usuario.count({ estado: true }, (err, conteo) => {
                 res.json({
                     ok: true,
                     usuarios: usuarios,
@@ -167,7 +167,8 @@ app.delete('/usuario/:id', function(req, res) {
 });
 
 //Servicio que marca el estado de un usuario a false por su id recibida por parámetro url. Esto se suele hacer
-//ahora en vez de eliminar registros, en vez de eliminarlo lo marcamos inactivo.
+//ahora en vez de eliminar registros, en vez de eliminarlo lo marcamos inactivo. Es como una simulación de eliminar
+//un usuario
 app.put('/usuario-marcar-eliminado/:id', function(req, res) {
 
     let id = req.params.id;
