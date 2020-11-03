@@ -166,4 +166,27 @@ app.delete('/usuario/:id', function(req, res) {
     });
 });
 
+//Servicio que marca el estado de un usuario a false por su id recibida por parámetro url. Esto se suele hacer
+//ahora en vez de eliminar registros, en vez de eliminarlo lo marcamos inactivo.
+app.put('/usuario-marcar-eliminado/:id', function(req, res) {
+
+    let id = req.params.id;
+
+    Usuario.findByIdAndUpdate(id, { estado: false }, { new: true }, (err, usuarioActualizado) => {
+
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        }
+
+        res.json({
+            ok: true,
+            usuarioActualizado
+        });
+    });
+
+});
+
 module.exports = app;
