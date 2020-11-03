@@ -4,6 +4,8 @@ const express = require('express');
 const Usuario = require('../models/usuario');
 //módulo para encriptar contraseñas
 const bcrypt = require('bcrypt');
+//Libreria underscore
+const _ = require('underscore');
 
 const app = express();
 
@@ -68,11 +70,17 @@ app.post('/usuario', function(req, res) {
 app.put('/usuario/:id', function(req, res) {
 
     let id = req.params.id;
-    let body = req.body;
+    //Usamos la función .pick de la libreria underscore que devuelve un objeto sólo con las propiedades que se
+    //pasan en un array como segundo argumento. Así en body sólo tendremos parámetros que se pueden actualizar
+    //directamente con POSTMAN, evitaremos campos como 'password' que irá encriptada cuando se crea el usuario o
+    //se controlará de otra forma. O el campo 'google' que tampoco debería poder actualizarse desde Postman
+    let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
+
 
     //La opción new:true hace que el usuario que se devuelve en el callback después de actualizar 'usuarioDB'
-    //sea el nuevo usuario ya actualizado
-    Usuario.findByIdAndUpdate(id, body, { new: true }, (err, usuarioDB) => {
+    //sea el nuevo usuario ya actualizado. La opción runValidators es para que mongoose corra todas las validaciones
+    //definidas en el esquema, así sólo se podrá actualizar si por ejemplo el rol es uno de los definidos en el esquema
+    Usuario.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, usuarioDB) => {
 
         //Si hay un error ponemos el return para que no siga ejecutando el código
         if (err) {
