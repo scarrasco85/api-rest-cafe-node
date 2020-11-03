@@ -32,10 +32,16 @@ app.get('/usuario', function(req, res) {
                 });
             }
 
-            res.json({
-                ok: true,
-                usuarios: usuarios
+            //Con .count() contamos la cantidad de registros que devuelve la búsqueda para el mismo filtro 
+            //utilizado en .find({}), y lo añadimos también en la respuesta
+            Usuario.count({}, (err, conteo) => {
+                res.json({
+                    ok: true,
+                    usuarios: usuarios,
+                    cuantos: conteo
+                });
             });
+
         });
 });
 
