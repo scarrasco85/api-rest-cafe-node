@@ -14,7 +14,11 @@ let urlDB;
 if (process.env.NODE_ENV === 'dev') {
     urlDB = 'mongodb://localhost:27017/cafe';
 } else {
-    urlDB = 'mongodb+srv://poliche:8BO7yLHRvBJ2varX@cluster0.akhps.mongodb.net/cafe';
+    //Hemos definido una variable de entorno en Heroku llamada 'MONGODB_URL' para que cuando subamos el proyecto
+    //a git hub no podamos ver la cadena de conexión y datos de acceso a la base de datos. Para crear una variable
+    //de entorno en heroku ver video del curso "Node: de cero a experto": 113.Variables de entorno personalizadas
+    //en heroku
+    urlDB = process.env.MONGODB_URL;
 }
 
 //URLDB es un environment que nos inventamos nosotros, no está creado. La vamos a usar para establecer la cadena
