@@ -20,9 +20,3 @@ if (process.env.NODE_ENV === 'dev') {
 //URLDB es un environment que nos inventamos nosotros, no está creado. La vamos a usar para establecer la cadena
 //de la base de datos
 process.env.URLDB = urlDB;
-//************* Datos conexión BBDD Mongo ATLAS  *********************/
-// base datos:
-// user: poliche
-// pass: 8BO7yLHRvBJ2varX
-
-// MongoAtlas url: mongodb+srv://poliche:8BO7yLHRvBJ2varX@cluster0.akhps.mongodb.net/cafe
