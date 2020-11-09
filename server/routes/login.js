@@ -1,6 +1,8 @@
 const express = require('express');
 //módulo para encriptar contraseñas
 const bcrypt = require('bcrypt');
+//Librería jsonwebtoken
+const jwt = require('jsonwebtoken');
 //Aquí usamos la nomenclatura con 'Usuario' con mayúscula porque se usará para crear nuevos objetos del esquema
 //Usuario con la palabra reservada New
 const Usuario = require('../models/usuario');
@@ -51,11 +53,17 @@ app.post('/login', (req, res) => {
             });
         }
 
+        //Generamos token válido para 30 días. SEED y CADUCIDAD_TOKEN configuradas en archivo config/config.js
+        //ya que serán variables de entorno producción y desarrollo que no queremos que se muestre en el código.
+        //Crearemos una variable de entorno en heroku SEED para cuando subamos el proyecto
+        let token = jwt.sign({
+            usuario: usuarioDB
+        }, process.env.SEED, { expiresIn: process.env.CADUCIDAD_TOKEN });
+
         res.json({
             ok: true,
             usuario: usuarioDB,
-            //token provisional
-            token: '123'
+            token: token
         });
     });
 
