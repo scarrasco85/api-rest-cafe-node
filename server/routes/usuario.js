@@ -2,6 +2,8 @@ const express = require('express');
 //Aquí usamos la nomenclatura con 'Usuario' con mayúscula porque se usará para crear nuevos objetos del esquema
 //Usuario con la palabra reservada New
 const Usuario = require('../models/usuario');
+//Middleware personalizado autenticacion por tokens
+const { verifyToken } = require('../middlewares/authentication');
 //módulo para encriptar contraseñas
 const bcrypt = require('bcrypt');
 //Libreria underscore
@@ -10,7 +12,7 @@ const _ = require('underscore');
 const app = express();
 
 //Servicio que devuelve los usuarios de la base de datos con paginación y filtros pasados por parámetros opcionales
-app.get('/usuario', function(req, res) {
+app.get('/usuario', verifyToken, (req, res) => {
     // res.json('get usuario');
 
     //los parámetros opcionales vienen en req.query, si no viene el parámetro desde lo establecemos a cero para
