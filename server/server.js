@@ -13,8 +13,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
-//Importaos y usamos las rutas para usuarios
-app.use(require('./routes/usuario'));
+//Importamos todas las rutas con el archivo /routes/index
+app.use(require('./routes/index'));
+
 
 //BDD conection: URLDB lo hemos definido en el archivo /config/config.js
 mongoose.connect(process.env.URLDB, {
