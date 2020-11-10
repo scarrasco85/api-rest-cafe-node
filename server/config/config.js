@@ -40,3 +40,8 @@ if (process.env.NODE_ENV === 'dev') {
 //URLDB es un environment que nos inventamos nosotros, no está creado. La vamos a usar para establecer la cadena
 //de la base de datos
 process.env.URLDB = urlDB;
+
+//=================================================================
+//  Google Client ID
+//=================================================================
+process.env.CLIENT_ID = process.env.CLIENT_ID || '931880761498-sdmbkl7pcvliomek5v9e6ihg7p6ucusa.apps.googleusercontent.com';

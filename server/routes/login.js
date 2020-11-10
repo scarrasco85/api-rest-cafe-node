@@ -3,6 +3,11 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 //Librería jsonwebtoken
 const jwt = require('jsonwebtoken');
+//Librería para verificar token google
+const { OAuth2Client } = require('google-auth-library');
+//Definimos CLIENT_ID de google en el archivo /config/config.js
+const client = new OAuth2Client(process.env.CLIENT_ID);
+
 //Aquí usamos la nomenclatura con 'Usuario' con mayúscula porque se usará para crear nuevos objetos del esquema
 //Usuario con la palabra reservada New
 const Usuario = require('../models/usuario');
@@ -71,14 +76,34 @@ app.post('/login', (req, res) => {
 
 });
 
+//Configuraciones de Google
+async function verify(token) {
+    const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
+        // Or, if multiple clients access the backend:
+        //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+    });
+    const payload = ticket.getPayload();
+    const userid = payload['sub'];
+    // If request specified a G Suite domain:
+    // const domain = payload['hd'];
+    console.log({ payload });
+}
+//verify().catch(console.error);
 
+//Servicio para login con Google Api
+app.post('/google', (req, res) => {
 
+    let token = req.body.idtoken;
 
+    //Función verify de Google
+    verify(token);
 
-
-
-
-
+    res.json({
+        token
+    });
+});
 
 
 
