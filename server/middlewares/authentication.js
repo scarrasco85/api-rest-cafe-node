@@ -25,13 +25,16 @@ let verifyToken = (req, res, next) => {
             //Error 401 es un 'No autorization', error de autorización
             return res.status(401).json({
                 ok: false,
-                err: err
+                err: {
+                    message: 'Token no válido'
+                }
             });
         }
 
         //Si no ha habido error hacemos que cualquier petición pueda tener acceso a la información del usuario 
         //después de haber pasado por este 'verifyToken'. Lo hacemos de la siguiente manera, en el objeto que 
         //encriptamos en login.js viene el usuario, por eso lo recogemos así.
+        //Es decir, estamos colocando la información del usuario en la req como una nueva propiedad llamada usuario
         req.usuario = decoded.usuario;
         //next() tiene que ir dentro de la función jwt.verify() porque si lo ponemos fuera se va a ejecutar
         //siempre aunque el token no sea válido y siempre continuará la petición mostrando la información del

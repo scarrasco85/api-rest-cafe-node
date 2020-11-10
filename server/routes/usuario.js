@@ -8,12 +8,12 @@ const { verifyToken } = require('../middlewares/authentication');
 const bcrypt = require('bcrypt');
 //Libreria underscore
 const _ = require('underscore');
+const usuario = require('../models/usuario');
 
 const app = express();
 
 //Servicio que devuelve los usuarios de la base de datos con paginación y filtros pasados por parámetros opcionales
 app.get('/usuario', verifyToken, (req, res) => {
-    // res.json('get usuario');
 
     //los parámetros opcionales vienen en req.query, si no viene el parámetro desde lo establecemos a cero para
     //que se muestre desde el primer registro
@@ -49,7 +49,7 @@ app.get('/usuario', verifyToken, (req, res) => {
         });
 });
 
-app.post('/usuario', function(req, res) {
+app.post('/usuario', verifyToken, function(req, res) {
     let body = req.body;
 
     //Esto crea una nueva instancia del esquema Usuario con todas la propiedades y métodos que trae mongoose
@@ -102,7 +102,7 @@ app.post('/usuario', function(req, res) {
 
 });
 
-app.put('/usuario/:id', function(req, res) {
+app.put('/usuario/:id', verifyToken, function(req, res) {
 
     let id = req.params.id;
     //Usamos la función .pick de la libreria underscore que devuelve un objeto sólo con las propiedades que se
@@ -110,7 +110,6 @@ app.put('/usuario/:id', function(req, res) {
     //directamente con POSTMAN, evitaremos campos como 'password' que irá encriptada cuando se crea el usuario o
     //se controlará de otra forma. O el campo 'google' que tampoco debería poder actualizarse desde Postman
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
-
 
     //La opción new:true hace que el usuario que se devuelve en el callback después de actualizar 'usuarioDB'
     //sea el nuevo usuario ya actualizado. La opción runValidators es para que mongoose corra todas las validaciones
@@ -127,18 +126,15 @@ app.put('/usuario/:id', function(req, res) {
 
         res.json({
             ok: true,
-            mensaje: 'Usuario actualizado correctamente',
+            message: 'Usuario actualizado correctamente',
             usuario: usuarioDB
         });
     });
 
-    // res.json({
-    //     id
-    // });
 });
 
 //Servicio que elimina un usuario por su id recibida por parámetro url
-app.delete('/usuario/:id', function(req, res) {
+app.delete('/usuario/:id', verifyToken, function(req, res) {
 
     let id = req.params.id;
 
