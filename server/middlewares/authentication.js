@@ -44,6 +44,26 @@ let verifyToken = (req, res, next) => {
 
 }
 
+//=================================================================
+//  Verificar Role Admin
+//=================================================================
+let verifyAdminRole = (req, res, next) => {
+
+    let usuario = req.usuario;
+
+
+    if (usuario.role != 'ADMIN_ROLE') {
+
+        return res.status(400).json({
+            ok: false,
+            message: 'Sólo usuarios con role de administrador tienen permisos para realizar esta operación'
+        });
+    }
+
+    next();
+}
+
 module.exports = {
-    verifyToken
+    verifyToken,
+    verifyAdminRole
 }

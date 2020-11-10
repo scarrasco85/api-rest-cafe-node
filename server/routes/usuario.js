@@ -3,7 +3,7 @@ const express = require('express');
 //Usuario con la palabra reservada New
 const Usuario = require('../models/usuario');
 //Middleware personalizado autenticacion por tokens
-const { verifyToken } = require('../middlewares/authentication');
+const { verifyToken, verifyAdminRole } = require('../middlewares/authentication');
 //módulo para encriptar contraseñas
 const bcrypt = require('bcrypt');
 //Libreria underscore
@@ -49,7 +49,7 @@ app.get('/usuario', verifyToken, (req, res) => {
         });
 });
 
-app.post('/usuario', verifyToken, function(req, res) {
+app.post('/usuario', [verifyToken, verifyAdminRole], function(req, res) {
     let body = req.body;
 
     //Esto crea una nueva instancia del esquema Usuario con todas la propiedades y métodos que trae mongoose
@@ -102,7 +102,7 @@ app.post('/usuario', verifyToken, function(req, res) {
 
 });
 
-app.put('/usuario/:id', verifyToken, function(req, res) {
+app.put('/usuario/:id', [verifyToken, verifyAdminRole], function(req, res) {
 
     let id = req.params.id;
     //Usamos la función .pick de la libreria underscore que devuelve un objeto sólo con las propiedades que se
@@ -134,7 +134,7 @@ app.put('/usuario/:id', verifyToken, function(req, res) {
 });
 
 //Servicio que elimina un usuario por su id recibida por parámetro url
-app.delete('/usuario/:id', verifyToken, function(req, res) {
+app.delete('/usuario/:id', [verifyToken, verifyAdminRole], function(req, res) {
 
     let id = req.params.id;
 
