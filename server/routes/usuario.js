@@ -8,7 +8,7 @@ const { verifyToken, verifyAdminRole } = require('../middlewares/authentication'
 const bcrypt = require('bcrypt');
 //Libreria underscore
 const _ = require('underscore');
-const usuario = require('../models/usuario');
+//const usuario = require('../models/usuario');
 
 const app = express();
 
