@@ -14,6 +14,10 @@ let categorySchema = new Schema({
     description: {
         type: String,
         required: [true, 'La descripción de la categoría es necesaria']
+    },
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'Usuario'
     }
 });
 
