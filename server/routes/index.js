@@ -9,6 +9,9 @@ app.use(require('./usuario'));
 app.use(require('./login'));
 // Import categories routes
 app.use(require('./category'));
+// Import products routes
+app.use(require('./product'));
+
 
 
 module.exports = app;

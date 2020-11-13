@@ -16,7 +16,6 @@ app.use(bodyParser.json());
 
 //Habilitar carpeta public
 app.use(express.static(path.resolve(__dirname, '../public')));
-console.log(path.resolve(__dirname, '../public'));
 
 //Importamos todas las rutas con el archivo /routes/index
 app.use(require('./routes/index'));
