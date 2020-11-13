@@ -11,6 +11,8 @@ app.use(require('./login'));
 app.use(require('./category'));
 // Import products routes
 app.use(require('./product'));
+// Import upload files routes
+app.use(require('./upload'));
 
 
 
