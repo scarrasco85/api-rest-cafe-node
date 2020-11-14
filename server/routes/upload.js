@@ -1,3 +1,5 @@
+// Service to upload images to the server
+
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const fs = require('fs');

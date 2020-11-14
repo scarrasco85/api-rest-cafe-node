@@ -13,6 +13,8 @@ app.use(require('./category'));
 app.use(require('./product'));
 // Import upload files routes
 app.use(require('./upload'));
+// Import image files routes
+app.use(require('./image'));
 
 
 
