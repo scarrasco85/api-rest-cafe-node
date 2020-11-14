@@ -6,6 +6,10 @@ let productSchema = new Schema({
     name: { type: String, required: [true, 'El nombre es necesario'] },
     unitPrice: { type: Number, required: [true, 'El precio únitario es necesario'] },
     description: { type: String, required: false },
+    img: {
+        type: String,
+        required: false
+    },
     active: { type: Boolean, required: true, default: true },
     idCategory: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
     idUser: { type: Schema.Types.ObjectId, ref: 'Usuario' }

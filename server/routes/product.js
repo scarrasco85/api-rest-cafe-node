@@ -130,6 +130,7 @@ app.post('/product', verifyToken, async(req, res) => {
         name,
         unitPrice,
         description,
+        img,
         active,
         idCategory, //Comprobar que exista en BDD
         idUser: req.usuario._id
