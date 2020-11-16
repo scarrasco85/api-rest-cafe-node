@@ -1,14 +1,12 @@
 const express = require('express');
 const Category = require('../models/category');
-//Middleware personalizado autenticacion por tokens
 const { verifyToken, verifyAdminRole } = require('../middlewares/authentication');
-
 
 const app = express();
 
 
 //=================================================================
-//  /category: Mostrar todas las categorías
+//  /category: Show all categories
 //=================================================================
 app.get('/category', (req, res) => {
 
@@ -23,8 +21,6 @@ app.get('/category', (req, res) => {
         .skip(from)
         .limit(perPage)
         .sort('name')
-        //populate: consulta que ObjectID existe en la categoría que estoy consultando y carga la información
-        //de ese ObjectID, en este caso del usuario que creó la categoría
         .populate('user', 'name email')
         .exec((err, categories) => {
 
@@ -43,7 +39,7 @@ app.get('/category', (req, res) => {
 });
 
 //=================================================================
-//  /category: Mostrar una categoría por ID
+// /category: Show a category by ID
 //=================================================================
 app.get('/category/:id', async(req, res) => {
 
@@ -82,7 +78,7 @@ app.get('/category/:id', async(req, res) => {
 
 
 //=================================================================
-//  /category: Crear nueva categoría - Sólo usuarios registrados y ADMIN_ROLE
+//  /category: Create a new category
 //=================================================================
 app.post('/category', [verifyToken, verifyAdminRole], (req, res) => {
 
@@ -120,60 +116,12 @@ app.post('/category', [verifyToken, verifyAdminRole], (req, res) => {
 });
 
 //=================================================================
-//  /category: Actualizar categoría por ID - Sólo usuarios registrados y ADMIN_ROLE
+//  /category: Update a category by ID
 //=================================================================
 app.put('/category/:id', async(req, res) => {
 
     let body = req.body;
     let id = req.params.id;
-
-    // Category.findByIdAndUpdate(id, body, { new: true }, (err, categoryUpdated) => {
-
-    //     if (err) {
-    //         return res.status(400).json({
-    //             ok: false,
-    //             err
-    //         });
-    //     }
-
-    //     if (!categoryUpdated) {
-    //         return res.json({
-    //             ok: true,
-    //             message: 'El id proporcionado no corresponde con ninguna categoría'
-    //         });
-    //     }
-
-    //     res.json({
-    //         ok: true,
-    //         message: 'Categoria actualizada correctamente',
-    //         categoria: categoryUpdated
-    //     });
-    // });
-
-    // let category = await Category.findByIdAndUpdate({ _id: id }, body, { new: true, runValidators: true, useFindAndModify: false })
-    //     .catch(err => {
-    //         return res.status(500).json({
-    //             ok: false,
-    //             err: {
-    //                 message: 'Error interno, es posible que el formado del id no sea el correcto',
-    //                 err
-    //             }
-    //         });
-    //     });
-
-    // if (!category) {
-    //     return res.status(400).json({
-    //         ok: false,
-    //         err: {
-    //             message: 'El id no corresponde con ninguna categoría'
-    //         }
-    //     });
-    // }
-
-    // res.json({
-    //     ok: true,
-    //     category
-    // });
 
     try {
 
@@ -206,11 +154,10 @@ app.put('/category/:id', async(req, res) => {
 });
 
 //=================================================================
-//  /category: Borrar una categoría
+//  /category: Delete a category
 //=================================================================
 app.delete('/category/:id', [verifyToken, verifyAdminRole], (req, res) => {
-    //solo un administrador puee borrar una categoría, debe pedir el token
-    //let categoryDeleted = await Category.findByIdAndDelete({ _id: req.params.id })
+
     Category.findByIdAndDelete({ _id: req.params.id })
         .exec((err, categoryDeleted) => {
             if (err) {
@@ -239,7 +186,6 @@ app.delete('/category/:id', [verifyToken, verifyAdminRole], (req, res) => {
             });
         });
 });
-
 
 
 module.exports = app;

@@ -6,10 +6,8 @@ const Category = require('../models/category');
 let app = express();
 
 //=================================================================
-//  /products: Obener todos los productos
+//  /products: Get all products
 //=================================================================
-// populate: usuario, categoria
-// paginado
 app.get('/product', (req, res) => {
 
     // Pagination
@@ -45,8 +43,6 @@ app.get('/product', (req, res) => {
 //=================================================================
 //  /produtcs: Get a product by ID
 //=================================================================
-// populate: usuario, categoria
-
 app.get('/product/:id', async(req, res) => {
 
     try {
@@ -83,16 +79,14 @@ app.get('/product/:id', async(req, res) => {
 });
 
 //=================================================================
-//  Search for products based on a search parameter 'searching'
+//  /product/search/: Search for products by 'name' field based on a search parameter 'searching'
 //=================================================================
 app.get('/product/search/:searching', verifyToken, (req, res) => {
 
     let searching = req.params.searching;
-    //Nueva expresión regular basada en la búsqueda, pasando 'i' hacemos que sea insensible a mayúsculas y 
-    //minúsculas
+
     let regex = new RegExp(searching, 'i');
-    //console.log({regex});
-    //Estamos buscando por nombre
+
     Product.find({ name: regex })
         .populate('idUser', 'name email')
         .populate('idCategory')
@@ -113,10 +107,8 @@ app.get('/product/search/:searching', verifyToken, (req, res) => {
 });
 
 //=================================================================
-//  /produtcs: Create a product
+//  /produtc: Create a product
 //=================================================================
-// grabar usuario
-//grabar categoria: del listado de categorías
 app.post('/product', verifyToken, async(req, res) => {
 
     let { name, description, active, idCategory } = req.body;
@@ -130,7 +122,7 @@ app.post('/product', verifyToken, async(req, res) => {
         description,
         img,
         active,
-        idCategory, //Comprobar que exista en BDD
+        idCategory,
         idUser: req.user._id
     });
 
@@ -145,7 +137,6 @@ app.post('/product', verifyToken, async(req, res) => {
             });
         }
 
-        //Si existe la categoría guardamos en la BBDD
         product.save((err, productDB) => {
             if (err) {
                 return res.status(500).json({
@@ -163,14 +154,13 @@ app.post('/product', verifyToken, async(req, res) => {
                     }
                 });
             }
-            //201 se usa cuando se hace un nuevo registro
+
             res.status(201).json({
                 ok: true,
                 message: 'The product has been created successfully.',
                 product: productDB
             });
         });
-
 
     } catch (err) {
         if (err) {
@@ -188,14 +178,12 @@ app.post('/product', verifyToken, async(req, res) => {
 
 
 //=================================================================
-//  /produtcs: Update a product by ID
+//  /produtc: Update a product by ID
 //=================================================================
-// populate: usuario, categoria
 app.put('/product/:id', verifyToken, async(req, res) => {
 
     let body = req.body;
     let id = req.params.id;
-
 
     try {
 
@@ -227,15 +215,11 @@ app.put('/product/:id', verifyToken, async(req, res) => {
 
 });
 
-
-//===============================================================================================================
-//  /produtcs: Delete a product by ID - It does not delete from the database, it modifies the active property
-//===============================================================================================================
-// populate: usuario, categoria
+//=================================================================
+//  /produtc: Delete a product by ID
+//=================================================================
 app.delete('/product/:id', [verifyToken, verifyAdminRole], (req, res) => {
 
-    //solo un administrador puee borrar una categoría, debe pedir el token
-    //let categoryDeleted = await Category.findByIdAndDelete({ _id: req.params.id })
     Product.findByIdAndDelete({ _id: req.params.id })
         .exec((err, productDeleted) => {
             if (err) {
@@ -264,6 +248,5 @@ app.delete('/product/:id', [verifyToken, verifyAdminRole], (req, res) => {
             });
         });
 });
-
 
 module.exports = app;

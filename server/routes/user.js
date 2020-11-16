@@ -1,34 +1,29 @@
 const express = require('express');
-//Aquí usamos la nomenclatura con 'Usuario' con mayúscula porque se usará para crear nuevos objetos del esquema
-//Usuario con la palabra reservada New
 const User = require('../models/user');
-//Middleware personalizado autenticacion por tokens
 const { verifyToken, verifyAdminRole } = require('../middlewares/authentication');
-//módulo para encriptar contraseñas
+// Password encryption library: bcrypt
 const bcrypt = require('bcrypt');
-//Libreria underscore
+// underscore library
 const _ = require('underscore');
-//const usuario = require('../models/usuario');
+const { Mongoose } = require('mongoose');
 
 const app = express();
 
-//Servicio que devuelve los usuarios de la base de datos con paginación y filtros pasados por parámetros opcionales
+//=================================================================
+//  /user: Gets all active users
+//=================================================================
 app.get('/user', verifyToken, (req, res) => {
 
-    //los parámetros opcionales vienen en req.query, si no viene el parámetro desde lo establecemos a cero para
-    //que se muestre desde el primer registro
     // Pagination
     let from = req.query.from || 0;
     from = Number(from);
     let perPage = req.query.perPage || 5;
     perPage = Number(perPage);
-    //Con el método find definimos los filtros, si se pasa objeto vacío devolverá todos los usuarios de la colección
-    //El segundo parámetro es una cadena de texto con los campos que queremos que devuelva la búsqueda, si no se
-    //denine ninguno devolverá todos los campos
-    //.exec() ejecuta find({}) con el filtro definido. Aquí muestra sólo los usuario activos
+
+    // Mongoose search
     User.find({ active: true }, 'name email role active google img')
-        .skip(from) //Se salta el número de registros pasados por parámetro
-        .limit(perPage) //Muestra los siguientes x registros pasados por parámetro
+        .skip(from)
+        .limit(perPage)
         .exec((err, users) => {
             if (err) {
                 return res.status(400).json({
@@ -37,8 +32,7 @@ app.get('/user', verifyToken, (req, res) => {
                 });
             }
 
-            //Con .count() contamos la cantidad de registros que devuelve la búsqueda para el mismo filtro 
-            //utilizado en .find({}), y lo añadimos también en la respuesta
+            // Total users
             User.count({ active: true }, (err, total) => {
                 res.json({
                     ok: true,
@@ -50,35 +44,29 @@ app.get('/user', verifyToken, (req, res) => {
         });
 });
 
+//=================================================================
+//  /user: Create a new user
+//=================================================================
 app.post('/user', [verifyToken, verifyAdminRole], function(req, res) {
+
     let body = req.body;
 
-    //Esto crea una nueva instancia del esquema Usuario con todas la propiedades y métodos que trae mongoose
     let user = new User({
         name: body.name,
         email: body.email,
-        //.hashSync es una función sincrona, no es ni promesa ni callback. El primer parámetro es la contraseña
-        //que queremos encriptar y el segundo el número de vueltas que hará para encriptarla
         password: bcrypt.hashSync(body.password, 10),
         role: body.role
     });
 
-    //Método .save() de mongo es para insertar en la base de datos
+    // Mongoose: The user is recorded in the database
     user.save((err, userDB) => {
         if (err) {
-            return res.status(400).json({
+            return res.status(500).json({
                 ok: false,
                 err: err
             });
         }
 
-        //En la response ponemos la propiedad password a null para no mostrar información de la contraseña
-        //aunque esté encriptada en el objeto que devolvemos.Ésta sería una forma válida de no mostrar la contraseña
-        //pero mostraría el nombre del campo 'password'. Es mejor hacerlo como en el Schema 'models/usuario.js' donde
-        //modificamos el método toJSON para quitar la propiedad password de la respuesta antes de mostrarla
-        //usuarioDB.password = null;
-
-        //Cuando sale bien en realidad podemos no mandar el status(200) ya que va implícito en la respuesta
         return res.status(200).json({
             ok: true,
             mensaje: 'User created successfully',
@@ -86,40 +74,24 @@ app.post('/user', [verifyToken, verifyAdminRole], function(req, res) {
         });
     });
 
-
-    // if (body.nombre === undefined) {
-
-    //     res.status(400).json({
-    //         ok: false,
-    //         mensaje: 'El nombre es necesario'
-    //     });
-
-    // } else {
-
-    //     res.json({
-    //         persona: body
-    //     });
-    // }
-
 });
 
+//=================================================================
+//  /user: Update a user
+//=================================================================
 app.put('/user/:id', [verifyToken, verifyAdminRole], function(req, res) {
 
     let id = req.params.id;
-    //Usamos la función .pick de la libreria underscore que devuelve un objeto sólo con las propiedades que se
-    //pasan en un array como segundo argumento. Así en body sólo tendremos parámetros que se pueden actualizar
-    //directamente con POSTMAN, evitaremos campos como 'password' que irá encriptada cuando se crea el usuario o
-    //se controlará de otra forma. O el campo 'google' que tampoco debería poder actualizarse desde Postman
+
+    // The 'pick' method of the 'underscore' library is used to obtain only the fields that are allowed to update
     let body = _.pick(req.body, ['name', 'email', 'img', 'role', 'active']);
 
-    //La opción new:true hace que el usuario que se devuelve en el callback después de actualizar 'usuarioDB'
-    //sea el nuevo usuario ya actualizado. La opción runValidators es para que mongoose corra todas las validaciones
-    //definidas en el esquema, así sólo se podrá actualizar si por ejemplo el rol es uno de los definidos en el esquema
+    // The 'runValidators' option is used to make it use 'mongoose-unique-validator' which is imported into the 
+    // schema model. This is responsible for the validations defined in the schema
     User.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, userDB) => {
 
-        //Si hay un error ponemos el return para que no siga ejecutando el código
         if (err) {
-            return res.status(400).json({
+            return res.status(500).json({
                 ok: false,
                 err: err
             });
@@ -134,7 +106,9 @@ app.put('/user/:id', [verifyToken, verifyAdminRole], function(req, res) {
 
 });
 
-//Servicio que elimina un usuario por su id recibida por parámetro url
+//=================================================================
+//  /user: Delete a user by ID
+//=================================================================
 app.delete('/user/:id', [verifyToken, verifyAdminRole], function(req, res) {
 
     let id = req.params.id;
@@ -165,9 +139,10 @@ app.delete('/user/:id', [verifyToken, verifyAdminRole], function(req, res) {
     });
 });
 
-//Servicio que marca el estado de un usuario a false por su id recibida por parámetro url. Esto se suele hacer
-//ahora en vez de eliminar registros, en vez de eliminarlo lo marcamos inactivo. Es como una simulación de eliminar
-//un usuario
+//=================================================================
+//  /user: Delete a user. But it doesn't physically delete but 
+// rather updates its 'active' property to mark it as a desactivated user
+//=================================================================
 app.put('/user/:id/:active', function(req, res) {
 
     let id = req.params.id;

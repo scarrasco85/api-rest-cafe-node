@@ -1,7 +1,9 @@
 // Service to upload images to the server
 
 const express = require('express');
+// Library to upload files
 const fileUpload = require('express-fileupload');
+// Library for working with files
 const fs = require('fs');
 const path = require('path');
 const User = require('../models/user');
@@ -9,24 +11,22 @@ const Product = require('../models/product');
 
 const app = express();
 
-//Middleware: fileUpload
-//Este middleware hace que cuando se llame a la función fileUpload todos los archivos que se suban caen a
-//req.files
-// default options
+//Middleware: fileUpload. Take the file to 'req.files.file'
 app.use(fileUpload());
 
-//Vamos a usar put en ver de post para actualizar también datos
+//=================================================================
+//  /upload: Upload an image and update the user
+//=================================================================
 app.put('/upload/:type/:id', function(req, res) {
 
     let type = req.params.type;
     let id = req.params.id;
 
-    //Si no viene archivo
+    // If file field is empty
     if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).json({ ok: false, err: { message: 'No files were uploaded.' } });
     }
 
-    //Recogemos el archivo
     let file = req.files.file;
 
     // Type validation
@@ -70,10 +70,6 @@ app.put('/upload/:type/:id', function(req, res) {
                 // Validate and update the user
                 userImg(id, res, type, fileNameDB);
 
-                // res.json({
-                //     ok: true,
-                //     message: 'File uploaded!'
-                // });
                 break;
 
             case 'products':
@@ -85,15 +81,14 @@ app.put('/upload/:type/:id', function(req, res) {
     });
 });
 
-//Recibe el id del usuario y la respuesta de donse se llama
-// Validate that the user exists and update with the new image
+// Function: Validate that the user exists and update with the new image
 const userImg = (id, res, type, fileNameDB) => {
 
     User.findById(id, (err, userBD) => {
 
         if (err) {
 
-            // Delete the last file
+            // Delete the actual file
             deleteFile(type, fileNameDB);
 
             return res.status(500).json({
@@ -104,7 +99,7 @@ const userImg = (id, res, type, fileNameDB) => {
 
         if (!userBD) {
 
-            // Delete the last file
+            // Delete the actual file
             deleteFile(type, fileNameDB);
 
             return res.status(400).json({
@@ -113,16 +108,6 @@ const userImg = (id, res, type, fileNameDB) => {
             });
         }
 
-        // Borrar imagen anterior si existe: como lo tenemos que usar en varios casos se ha creado la función
-        // deleteFile()
-        // Previous image path 
-        // let pathPreviousImg = path.resolve(__dirname, `../../uploads/${ type }/${ imgName }`);
-
-        // //.existsSync(path) devuelve true si el path existe. Si existe img anterior la borraremos
-        // if (fs.existsSync(pathPreviousImg)) {
-        //     //.unlinkSync(): elimina el archivo según su path
-        //     fs.unlinkSync(pathPreviousImg);
-        // }
         // Delete previous file if exists
         deleteFile(type, userBD.img);
 
@@ -148,13 +133,14 @@ const userImg = (id, res, type, fileNameDB) => {
     });
 }
 
+// Function: Validate that the product exists and update with the new image
 const productImg = (id, res, type, fileNameDB) => {
 
     Product.findById(id, (err, productDB) => {
 
         if (err) {
 
-            // Delete the last file
+            // Delete the actual file
             deleteFile(type, fileNameDB);
 
             return res.status(500).json({
@@ -165,7 +151,7 @@ const productImg = (id, res, type, fileNameDB) => {
 
         if (!productDB) {
 
-            // Delete the last file
+            // Delete the actual file
             deleteFile(type, fileNameDB);
 
             return res.status(400).json({
@@ -199,18 +185,15 @@ const productImg = (id, res, type, fileNameDB) => {
 
 }
 
-// Delete a previous file if exists
+// Function: Delete a file if exists
 const deleteFile = (type, imgName) => {
 
-    // Previous image path 
-    let pathPreviousImg = path.resolve(__dirname, `../../uploads/${ type }/${ imgName }`);
+    let pathFile = path.resolve(__dirname, `../../uploads/${ type }/${ imgName }`);
 
-    //.existsSync(path) devuelve true si el path existe. Si existe img anterior la borraremos
-    if (fs.existsSync(pathPreviousImg)) {
-        //.unlinkSync(): elimina el archivo según su path
-        fs.unlinkSync(pathPreviousImg);
+    if (fs.existsSync(pathFile)) {
+
+        fs.unlinkSync(pathFile);
     }
 }
-
 
 module.exports = app;

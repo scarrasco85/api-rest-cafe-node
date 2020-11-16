@@ -1,4 +1,4 @@
-// Service to serve images to the client
+// Service that brings an image from the server to the client
 
 const express = require('express');
 const fs = require('fs');

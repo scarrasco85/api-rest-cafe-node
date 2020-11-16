@@ -21,7 +21,7 @@ app.use(express.static(path.resolve(__dirname, '../public')));
 app.use(require('./routes/index'));
 
 
-//BDD conection: URLDB lo hemos definido en el archivo /config/config.js
+//BDD conection
 mongoose.connect(process.env.URLDB, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
