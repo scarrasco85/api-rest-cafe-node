@@ -13,7 +13,7 @@ const app = express();
 app.get('/category', (req, res) => {
 
     // Pagination
-    let from = req.query.desde || 0;
+    let from = req.query.from || 0;
     from = Number(from);
     let perPage = req.query.perPage || 10;
     perPage = Number(perPage);
@@ -25,7 +25,7 @@ app.get('/category', (req, res) => {
         .sort('name')
         //populate: consulta que ObjectID existe en la categoría que estoy consultando y carga la información
         //de ese ObjectID, en este caso del usuario que creó la categoría
-        .populate('user', 'nombre email')
+        .populate('user', 'name email')
         .exec((err, categories) => {
 
             if (err) {
@@ -56,7 +56,7 @@ app.get('/category/:id', async(req, res) => {
             return res.status(400).json({
                 ok: false,
                 err: {
-                    message: 'El id no corresponde con ninguna categoría'
+                    message: 'Id does not correspond to any category.'
                 }
             });
         }
@@ -72,7 +72,7 @@ app.get('/category/:id', async(req, res) => {
         return res.status(500).json({
             ok: false,
             err: {
-                message: 'Error interno, es posible que el formado del id no sea el correcto',
+                message: 'Internal error, the id format may not be correct.',
                 err
             }
         });
@@ -90,7 +90,7 @@ app.post('/category', [verifyToken, verifyAdminRole], (req, res) => {
     let category = new Category({
         name,
         description,
-        user: req.usuario._id
+        user: req.user._id
     });
 
 
@@ -106,14 +106,14 @@ app.post('/category', [verifyToken, verifyAdminRole], (req, res) => {
             return res.status(400).json({
                 ok: false,
                 err: {
-                    message: 'Error al crear la categoría',
+                    message: 'An unexpected error occurred while creating the category.',
                     err
                 }
             });
         }
         res.json({
             ok: true,
-            message: 'La categoría ha sido creada correctamente.',
+            message: 'The category has been created successfully.',
             category: categoryDB
         });
     });
@@ -183,7 +183,7 @@ app.put('/category/:id', async(req, res) => {
             return res.status(400).json({
                 ok: false,
                 err: {
-                    message: 'El id no corresponde con ninguna categoría'
+                    message: 'Id does not correspond to any category.'
                 }
             });
         }
@@ -197,7 +197,7 @@ app.put('/category/:id', async(req, res) => {
         return res.status(500).json({
             ok: false,
             err: {
-                message: 'Error interno, es posible que el formado del id no sea el correcto',
+                message: 'Internal error, the id format may not be correct.',
                 err
             }
         });
@@ -217,7 +217,7 @@ app.delete('/category/:id', [verifyToken, verifyAdminRole], (req, res) => {
                 return res.status(500).json({
                     ok: false,
                     err: {
-                        message: 'Error interno, es posible que el formado del id no sea el correcto',
+                        message: 'Internal error, the id format may not be correct.',
                         err
                     }
                 });
@@ -227,13 +227,13 @@ app.delete('/category/:id', [verifyToken, verifyAdminRole], (req, res) => {
 
                 return res.json({
                     ok: false,
-                    message: `No existe una categoría con el id ${ req.params.id }`
+                    message: `There is no category with this ID: ${ req.params.id }.`
                 });
             }
 
             res.json({
                 ok: true,
-                message: 'La categoría ha sido eliminada correctamente',
+                message: 'Category has been successfully removed.',
                 categoryDeleted
 
             });

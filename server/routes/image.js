@@ -7,6 +7,7 @@ const { verifyImgToken } = require('../middlewares/authentication');
 
 const app = express();
 
+// Get Image: Bring an image from the server to the client
 app.get('/image/:type/:img', verifyImgToken, (req, res) => {
 
     let type = req.params.type;

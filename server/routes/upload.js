@@ -4,7 +4,7 @@ const express = require('express');
 const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const path = require('path');
-const User = require('../models/usuario');
+const User = require('../models/user');
 const Product = require('../models/product');
 
 const app = express();
@@ -139,7 +139,7 @@ const userImg = (id, res, type, fileNameDB) => {
 
             res.json({
                 ok: true,
-                userUpdated: userUpdated,
+                user: userUpdated,
                 img: fileNameDB
             })
         });

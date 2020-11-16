@@ -4,27 +4,27 @@ const uniqueValidator = require('mongoose-unique-validator');
 //Forma de definir la lista de roles válidos y el mensaje de error que se devolverá. {VALUE} hará referencia
 //a lo que el usuario haya introducido, si introduce en el campo rol un valor diferente a ADMIN_ROLE o USER_ROLE
 //devolverá ese error. rolesValidos debe hacer referencia a la propiedad 'enum' de roles en el esquema
-let rolesValidos = {
+let validRoles = {
     values: ['ADMIN_ROLE', 'USER_ROLE'],
-    message: '{VALUE} no es un rol válido'
+    message: '{VALUE} is not a valid role'
 };
 
 let Schema = mongoose.Schema;
 
 //Declaramos el Esquema de la colección usuario
-let usuarioSchema = new Schema({
-    nombre: {
+let userSchema = new Schema({
+    name: {
         type: String,
-        required: [true, 'El nombre es necesario']
+        required: [true, 'User name is required']
     },
     email: {
         type: String,
         unique: true,
-        required: [true, 'El correo es necesario']
+        required: [true, 'User email is required']
     },
     password: {
         type: String,
-        required: [true, 'La contraseña es obligatoria']
+        required: [true, 'User password is required']
     },
     img: {
         type: String,
@@ -33,10 +33,11 @@ let usuarioSchema = new Schema({
     role: {
         type: String,
         default: 'USER_ROLE',
-        enum: rolesValidos
+        enum: validRoles
     },
-    estado: {
+    active: {
         type: Boolean,
+        required: true,
         default: true
     },
     //si el usuario no se crea con la identificación de Google, será un usuario normal y la propiedad google siempre
@@ -50,7 +51,7 @@ let usuarioSchema = new Schema({
 //Así podemos modificar el método de un esquema. Modificamos el método .toJSON del esquema ya que éste siempre
 //se llama cuando va a imprimir la información en un JSON, es decir, se llama cuando se imprime una response. Así,
 //cuando se inserte un usuario y se imprime la response, eliminaremos el campo contraseña del objeto que se imprime
-usuarioSchema.methods.toJSON = function() {
+userSchema.methods.toJSON = function() {
     //cogemos la información que esté llamando al método
     let user = this;
     //convertimos la información a un objeto para tener todas sus propiedades y métodos
@@ -65,7 +66,7 @@ usuarioSchema.methods.toJSON = function() {
 //Aquí decimos a este esquema que use el plugin mongoose-unique-validator. En {PATH} mongoose inyectará el elemento
 //que esté marcado en el esquema como 'unique: true' y falte para mostrarlo en el mensaje de error. Es decir si
 //se repite un elemento que ya está introducido devolverá ese error. Ej: 'email debe ser único' ó 'dni debe ser único'
-usuarioSchema.plugin(uniqueValidator, { message: '{PATH} debe de ser único' });
+userSchema.plugin(uniqueValidator, { message: '{PATH} must be unique' });
 
 //Exportamos el esquema con el nombre de Usuario, que tendrá la configuración de 'usuarioSchema'
-module.exports = mongoose.model('Usuario', usuarioSchema);
+module.exports = mongoose.model('User', userSchema);

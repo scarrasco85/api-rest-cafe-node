@@ -8,9 +8,9 @@ const { OAuth2Client } = require('google-auth-library');
 //Definimos CLIENT_ID de google en el archivo /config/config.js
 const client = new OAuth2Client(process.env.CLIENT_ID);
 
-//Aquí usamos la nomenclatura con 'Usuario' con mayúscula porque se usará para crear nuevos objetos del esquema
-//Usuario con la palabra reservada New
-const Usuario = require('../models/usuario');
+//Aquí usamos la nomenclatura con 'User' con mayúscula porque se usará para crear nuevos objetos del esquema
+//User con la palabra reservada New
+const User = require('../models/user');
 const { isRegExp } = require('underscore');
 
 const app = express();
@@ -20,7 +20,7 @@ app.post('/login', (req, res) => {
 
     let body = req.body;
 
-    Usuario.findOne({ email: body.email }, (err, usuarioDB) => {
+    User.findOne({ email: body.email }, (err, userDB) => {
 
         //El error solo saltará si hay una excepción en la consulta de base de datos, es decir que si el usuario
         //introduce un email incorrecto o que no existe devolverá un objeto vacío, no un error
@@ -33,13 +33,13 @@ app.post('/login', (req, res) => {
         }
 
         //Comprobamos si se ha devuelto un usuario vacío
-        if (!usuarioDB) {
+        if (!userDB) {
             return res.status(400).json({
                 ok: false,
                 err: {
                     //Aunque no estemos validando la contraseña aún, por seguridad es importante que el usuario
                     //no sepa si está fallando el usuario o la contraseña
-                    message: `Usuario o contraseña incorrectos`
+                    message: `Username or password is incorrect`
                 }
             });
         }
@@ -47,13 +47,13 @@ app.post('/login', (req, res) => {
         //.compareSync encripta la contraseña de primer parámetro y la compara con la contraseña encriptada ya
         //que está en la base de datos, es encriptación de una vía, no se puede volver a retornar el valor, sólo
         //comparar si encriptando se obtiene el mismo resultado. Devuelve true o false
-        if (!bcrypt.compareSync(body.password, usuarioDB.password)) {
+        if (!bcrypt.compareSync(body.password, userDB.password)) {
             return res.status(400).json({
                 ok: false,
                 err: {
                     //Aunque no estemos validando la contraseña aún, por seguridad es importante que el usuario
                     //no sepa si está fallando el usuario o la contraseña
-                    message: `Usuario o contraseña incorrectos`
+                    message: `Username or password is incorrect`
                 }
             });
         }
@@ -62,12 +62,12 @@ app.post('/login', (req, res) => {
         //ya que serán variables de entorno producción y desarrollo que no queremos que se muestre en el código.
         //Crearemos una variable de entorno en heroku SEED para cuando subamos el proyecto
         let token = jwt.sign({
-            usuario: usuarioDB
+            user: userDB
         }, process.env.SEED, { expiresIn: process.env.CADUCIDAD_TOKEN });
 
         res.json({
             ok: true,
-            usuario: usuarioDB,
+            user: userDB,
             token: token
         });
     });
@@ -91,7 +91,7 @@ async function verify(token) {
 
     //console.log({ payload });
     return {
-        nombre: payload.name,
+        name: payload.name,
         email: payload.email,
         img: payload.picture,
         google: true
@@ -115,7 +115,7 @@ app.post('/google', async(req, res) => {
         });
 
     //Comprobamos si el usuario estaba registrado y demás
-    Usuario.findOne({ email: googleUser.email }, (err, usuarioDB) => {
+    User.findOne({ email: googleUser.email }, (err, userDB) => {
 
         //El error solo saltará si hay una excepción en la consulta de base de datos, es decir que si el usuario
         //introduce un email incorrecto o que no existe devolverá un objeto vacío, no un error
@@ -128,14 +128,14 @@ app.post('/google', async(req, res) => {
         }
 
         //Si existe el usuario en la base de datos
-        if (usuarioDB) {
+        if (userDB) {
             //Si no se ha registrado por google, pero está intentando autentificarse con Google, esto no debe
             //permitirse
-            if (usuarioDB.google === false) {
+            if (userDB.google === false) {
                 return res.status(400).json({
                     ok: false,
                     err: {
-                        message: 'Ya está registrado en nuestro sistema sin usar las credenciales de Google, debe usar su autenticación normal'
+                        message: 'You are already registered in our system without using Google credentials, you must use your normal authentication.'
                     }
                 });
                 //Si se registró por Google anteriormente debemos renovar su token de nuestra aplicación para loguearlo  
@@ -145,12 +145,12 @@ app.post('/google', async(req, res) => {
                 //ya que serán variables de entorno producción y desarrollo que no queremos que se muestre en el código.
                 //Crearemos una variable de entorno en heroku SEED para cuando subamos el proyecto
                 let token = jwt.sign({
-                    usuario: usuarioDB
+                    user: userDB
                 }, process.env.SEED, { expiresIn: process.env.CADUCIDAD_TOKEN });
 
                 res.json({
                     ok: true,
-                    usuario: usuarioDB,
+                    user: userDB,
                     token: token
                 });
             }
@@ -159,19 +159,19 @@ app.post('/google', async(req, res) => {
             //Si el usuario no existe en nuestra base de datos deberemos crear un nuevo usuario en nuestra
             //base de datos con la propiedad 'google' = true para identificarlo como usuario registrado con las
             //credenciales de Google
-            let usuario = new Usuario();
+            let user = new User();
 
-            usuario.nombre = googleUser.nombre;
-            usuario.email = googleUser.email;
-            usuario.img = googleUser.img;
-            usuario.google = true;
+            user.name = googleUser.name;
+            user.email = googleUser.email;
+            user.img = googleUser.img;
+            user.google = true;
             //Como el password en nuestro modelo es requerido, ponemos un password por defecto para los usuarios
             //de Google, no hay que preocuparse ya que cuando un usuario intente loguearse con un correo y este
             //password ':)', nunca hará match porque en la bbdd está encriptada
-            usuario.password = ':)';
+            user.password = ':)';
 
             //Grabamos usuario en bbdd
-            usuario.save((err, usuarioDB) => {
+            user.save((err, userDB) => {
 
                 if (err) {
                     //Error 500 sería un error del servidor
@@ -183,12 +183,12 @@ app.post('/google', async(req, res) => {
 
                 //Si la inserción ha sido correcta generamos el token y devolvemos la información del usuario
                 let token = jwt.sign({
-                    usuario: usuarioDB
+                    user: userDB
                 }, process.env.SEED, { expiresIn: process.env.CADUCIDAD_TOKEN });
 
                 res.json({
                     ok: true,
-                    usuario: usuarioDB,
+                    user: userDB,
                     token: token
                 });
             });

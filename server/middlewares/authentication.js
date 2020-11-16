@@ -35,7 +35,7 @@ let verifyToken = (req, res, next) => {
         //después de haber pasado por este 'verifyToken'. Lo hacemos de la siguiente manera, en el objeto que 
         //encriptamos en login.js viene el usuario, por eso lo recogemos así.
         //Es decir, estamos colocando la información del usuario en la req como una nueva propiedad llamada usuario
-        req.usuario = decoded.usuario;
+        req.user = decoded.user;
         //next() tiene que ir dentro de la función jwt.verify() porque si lo ponemos fuera se va a ejecutar
         //siempre aunque el token no sea válido y siempre continuará la petición mostrando la información del
         //usuario
@@ -49,14 +49,14 @@ let verifyToken = (req, res, next) => {
 //=================================================================
 let verifyAdminRole = (req, res, next) => {
 
-    let usuario = req.usuario;
+    let user = req.user;
 
 
-    if (usuario.role != 'ADMIN_ROLE') {
+    if (user.role != 'ADMIN_ROLE') {
 
         return res.status(400).json({
             ok: false,
-            message: 'Sólo usuarios con role de administrador tienen permisos para realizar esta operación'
+            message: 'Only users with an administrator role have permissions to perform this operation.'
         });
     }
 
@@ -83,7 +83,7 @@ let verifyImgToken = (req, res, next) => {
             return res.status(401).json({
                 ok: false,
                 err: {
-                    message: 'Token no válido'
+                    message: 'Invalid token.'
                 }
             });
         }
@@ -92,7 +92,7 @@ let verifyImgToken = (req, res, next) => {
         //después de haber pasado por este 'verifyToken'. Lo hacemos de la siguiente manera, en el objeto que 
         //encriptamos en login.js viene el usuario, por eso lo recogemos así.
         //Es decir, estamos colocando la información del usuario en la req como una nueva propiedad llamada usuario
-        req.usuario = decoded.usuario;
+        req.user = decoded.user;
         //next() tiene que ir dentro de la función jwt.verify() porque si lo ponemos fuera se va a ejecutar
         //siempre aunque el token no sea válido y siempre continuará la petición mostrando la información del
         //usuario

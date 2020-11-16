@@ -23,7 +23,7 @@ app.get('/product', (req, res) => {
         .skip(from)
         .limit(perPage)
         .sort('name')
-        .populate('idUser', 'nombre email')
+        .populate('idUser', 'name email')
         .populate('idCategory')
         .exec((err, products) => {
 
@@ -59,7 +59,7 @@ app.get('/product/:id', async(req, res) => {
             return res.status(400).json({
                 ok: false,
                 err: {
-                    message: 'El id no corresponde con ningun producto'
+                    message: 'Id does not correspond to any product.'
                 }
             });
         }
@@ -75,7 +75,7 @@ app.get('/product/:id', async(req, res) => {
         return res.status(500).json({
             ok: false,
             err: {
-                message: 'Error interno, es posible que el formado del id no sea el correcto',
+                message: 'Internal error, the id format may not be correct.',
                 err
             }
         });
@@ -94,7 +94,7 @@ app.get('/product/search/:searching', verifyToken, (req, res) => {
     //console.log({regex});
     //Estamos buscando por nombre
     Product.find({ name: regex })
-        .populate('idUser', 'nombre email')
+        .populate('idUser', 'name email')
         .populate('idCategory')
         .exec((err, products) => {
 
@@ -122,8 +122,6 @@ app.post('/product', verifyToken, async(req, res) => {
     let { name, description, active, idCategory } = req.body;
     let unitPrice = parseFloat(req.body.unitPrice).toFixed(2);
     console.log({ unitPrice });
-    let unitPriceNumber = Number(req.body.unitPrice);
-    console.log({ unitPriceNumber });
 
     let product = new Product({
 
@@ -133,7 +131,7 @@ app.post('/product', verifyToken, async(req, res) => {
         img,
         active,
         idCategory, //Comprobar que exista en BDD
-        idUser: req.usuario._id
+        idUser: req.user._id
     });
 
     try {
@@ -143,7 +141,7 @@ app.post('/product', verifyToken, async(req, res) => {
         if (!categoryBD) {
             return res.status(400).json({
                 ok: false,
-                message: `La categoría proporcionada no existe en la BBDD`
+                message: `The category provided does not exist in the DB.`
             });
         }
 
@@ -160,7 +158,7 @@ app.post('/product', verifyToken, async(req, res) => {
                 return res.status(400).json({
                     ok: false,
                     err: {
-                        message: 'Error al crear el producto',
+                        message: 'An unexpected error occurred while creating the product.',
                         err
                     }
                 });
@@ -168,7 +166,7 @@ app.post('/product', verifyToken, async(req, res) => {
             //201 se usa cuando se hace un nuevo registro
             res.status(201).json({
                 ok: true,
-                message: 'El producto ha sido creado correctamente.',
+                message: 'The product has been created successfully.',
                 product: productDB
             });
         });
@@ -179,7 +177,7 @@ app.post('/product', verifyToken, async(req, res) => {
             return res.status(500).json({
                 ok: false,
                 err: {
-                    message: 'Es posible que haya un error con el formato de la categoría proporcionada',
+                    message: 'Internal error, the id format may not be correct.',
                     err
                 }
             });
@@ -207,7 +205,7 @@ app.put('/product/:id', verifyToken, async(req, res) => {
             return res.status(400).json({
                 ok: false,
                 err: {
-                    message: 'El id no corresponde con ningun producto'
+                    message: 'Id does not correspond to any product.'
                 }
             });
         }
@@ -221,7 +219,7 @@ app.put('/product/:id', verifyToken, async(req, res) => {
         return res.status(500).json({
             ok: false,
             err: {
-                message: 'Error interno, es posible que el formado del id no sea el correcto',
+                message: 'Internal error, the id format may not be correct.',
                 err
             }
         });
@@ -244,7 +242,7 @@ app.delete('/product/:id', [verifyToken, verifyAdminRole], (req, res) => {
                 return res.status(500).json({
                     ok: false,
                     err: {
-                        message: 'Error interno, es posible que el formado del id no sea el correcto',
+                        message: 'Internal error, the id format may not be correct.',
                         err
                     }
                 });
@@ -254,13 +252,13 @@ app.delete('/product/:id', [verifyToken, verifyAdminRole], (req, res) => {
 
                 return res.json({
                     ok: false,
-                    message: `No existe un producto con el id ${ req.params.id }`
+                    message: `There is no product with this ID: ${ req.params.id }`
                 });
             }
 
             res.json({
                 ok: true,
-                message: 'El producto ha sido eliminado correctamente',
+                message: 'Product has been successfully removed.',
                 productDeleted
 
             });

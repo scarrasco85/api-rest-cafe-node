@@ -9,20 +9,20 @@ let categorySchema = new Schema({
     name: {
         type: String,
         unique: true,
-        required: [true, 'El nombre de la categoría es necesario']
+        required: [true, 'Category name is required']
     },
     description: {
         type: String,
-        required: [true, 'La descripción de la categoría es necesaria']
+        required: [true, 'Category description is required']
     },
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'Usuario'
+        ref: 'User'
     }
 });
 
 //Unique Validator inyection
-categorySchema.plugin(uniqueValidator, { message: '{PATH} debe de ser único' });
+categorySchema.plugin(uniqueValidator, { message: '{PATH} must be unique' });
 
 
 module.exports = mongoose.model('Category', categorySchema);
