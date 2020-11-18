@@ -48,3 +48,8 @@ You can check the documentation here and you can test it using Postman.
 ![](server/assets/Ejemplo_uso_cafe_node.png)
 ---
 
+#### User login
+
+![](server/assets/login.png)
+---
+
