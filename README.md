@@ -8,9 +8,7 @@ If he wants, the user can log out once he has finished working with the app.
 
 ## Installation 🔧
 
-After cloning the repository:
-
-Remember to install the node modules:
+After cloning the repository remember to install the node modules:
 ```
 npm install
 ```
@@ -34,9 +32,10 @@ You can change it in the file 'server/congif/config.js'
 - Heroku
 ---
 ## Do you want to see the application running? 🚀
+
 But remember that it is a backend application. In frontend it is only implemented to be able to authenticate with Google api.
  [Click here!](https://arcane-hamlet-70748.herokuapp.com/)
----
+
 ---
 ## Do you want to see how the application works? 📖
 You can check the documentation here and you can test it using Postman.
