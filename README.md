@@ -1,8 +1,9 @@
 
-# Cafe backend server with NodeJS y MongoDB
+# Cafe Backend Server with NodeJS y MongoDB
 ---
-(![](server/assets/Ejemplo_uso_cafe_node.png))
+
 ## What is api-rest-cafe-node? 🤔
+
 We are talking about an Api Restfull for a cafe shop that has CRUD of users, products and categories. It also allows authentication with a database user or using your Google credentials through the Google api. It also has an image service that allows you to upload and obtain images from the server. 
 If he wants, the user can log out once he has finished working with the app.
 ---
