@@ -8,7 +8,7 @@ If he wants, the user can log out once he has finished working with the app.
 
 ## Installation 🔧
 After cloning the repository:
----
+
 Remember to install the node modules:
 ```
 npm install
