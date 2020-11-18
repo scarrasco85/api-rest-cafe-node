@@ -25,6 +25,7 @@ You can change it in the file 'server/congif/config.js'
 - JavaScript
 - NodeJS
 - MongoDB
+- Express
 - Robo3T
 - Visual Studio Code
 - Git/Git Hub
