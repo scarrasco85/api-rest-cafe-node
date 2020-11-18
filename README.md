@@ -43,7 +43,8 @@ You can check the documentation here and you can test it using Postman.
 
 ---
 ## Some working samples ⚙️
-#### Homepage
+#### Create a new user
 
+![](server/assets/Ejemplo_uso_cafe_node.png)
 ---
 
