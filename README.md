@@ -7,6 +7,7 @@ We are talking about an Api Restfull for a cafe shop that has CRUD of users, pro
 If he wants, the user can log out once he has finished working with the app.
 
 ## Installation 🔧
+
 After cloning the repository:
 
 Remember to install the node modules:
@@ -19,6 +20,7 @@ node server/server.js
 ```
 By default the server runs in: [](http://localhost:3000/).
 You can change it in the file 'server/congif/config.js' 
+
 ---
 ## Technologies used 🛠️
 - HTML
