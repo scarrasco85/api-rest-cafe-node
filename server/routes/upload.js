@@ -15,7 +15,7 @@ const app = express();
 app.use(fileUpload());
 
 //=================================================================
-//  /upload: Upload an image and update the user
+//  /upload: Upload an image and update the user or product
 //=================================================================
 app.put('/upload/:type/:id', function(req, res) {
 
@@ -28,9 +28,10 @@ app.put('/upload/:type/:id', function(req, res) {
     }
 
     let file = req.files.file;
-
+    console.log({ file });
     // Type validation
     let validTypes = ['users', 'products'];
+
     if (validTypes.indexOf(type) < 0) {
         return res.status(400).json({
             ok: false,

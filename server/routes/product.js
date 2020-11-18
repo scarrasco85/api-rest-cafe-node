@@ -6,20 +6,20 @@ const Category = require('../models/category');
 let app = express();
 
 //=================================================================
-//  /products: Get all products
+//  /product: Get all products
 //=================================================================
 app.get('/product', (req, res) => {
 
     // Pagination
     let from = req.query.desde || 0;
     from = Number(from);
-    let perPage = req.query.perPage || 10;
-    perPage = Number(perPage);
+    let showByPage = req.query.showByPage || 10;
+    showByPage = Number(showByPage);
 
     //Mongoose search: active products
     Product.find({ active: true })
         .skip(from)
-        .limit(perPage)
+        .limit(showByPage)
         .sort('name')
         .populate('idUser', 'name email')
         .populate('idCategory')
@@ -79,7 +79,7 @@ app.get('/product/:id', async(req, res) => {
 });
 
 //=================================================================
-//  /product/search/: Search for products by 'name' field based on a search parameter 'searching'
+//  /product/: Search for products by 'name' field based on a search parameter 'searching'
 //=================================================================
 app.get('/product/search/:searching', verifyToken, (req, res) => {
 
@@ -111,7 +111,7 @@ app.get('/product/search/:searching', verifyToken, (req, res) => {
 //=================================================================
 app.post('/product', verifyToken, async(req, res) => {
 
-    let { name, description, active, idCategory } = req.body;
+    let { name, description, img, active, idCategory } = req.body;
     let unitPrice = parseFloat(req.body.unitPrice).toFixed(2);
     console.log({ unitPrice });
 

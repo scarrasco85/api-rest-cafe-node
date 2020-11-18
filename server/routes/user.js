@@ -17,13 +17,13 @@ app.get('/user', verifyToken, (req, res) => {
     // Pagination
     let from = req.query.from || 0;
     from = Number(from);
-    let perPage = req.query.perPage || 5;
-    perPage = Number(perPage);
+    let showByPage = req.query.showByPage || 5;
+    showByPage = Number(showByPage);
 
     // Mongoose search
     User.find({ active: true }, 'name email role active google img')
         .skip(from)
-        .limit(perPage)
+        .limit(showByPage)
         .exec((err, users) => {
             if (err) {
                 return res.status(400).json({
@@ -47,7 +47,7 @@ app.get('/user', verifyToken, (req, res) => {
 //=================================================================
 //  /user: Create a new user
 //=================================================================
-app.post('/user', [verifyToken, verifyAdminRole], function(req, res) {
+app.post('/user', function(req, res) {
 
     let body = req.body;
 

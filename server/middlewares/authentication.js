@@ -17,7 +17,7 @@ const verifyToken = (req, res, next) => {
             return res.status(401).json({
                 ok: false,
                 err: {
-                    message: 'Token no válido'
+                    message: 'Invalid token.'
                 }
             });
         }
@@ -37,8 +37,7 @@ let verifyAdminRole = (req, res, next) => {
 
     let user = req.user;
 
-
-    if (user.role != 'ADMIN_ROLE') {
+    if (user.role != 'ADMIN_ROLE' || user.role == undefined) {
 
         return res.status(400).json({
             ok: false,

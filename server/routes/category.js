@@ -13,13 +13,13 @@ app.get('/category', (req, res) => {
     // Pagination
     let from = req.query.from || 0;
     from = Number(from);
-    let perPage = req.query.perPage || 10;
-    perPage = Number(perPage);
+    let showByPage = req.query.showByPage || 10;
+    showByPage = Number(showByPage);
 
     //Mongoose search
     Category.find({})
         .skip(from)
-        .limit(perPage)
+        .limit(showByPage)
         .sort('name')
         .populate('user', 'name email')
         .exec((err, categories) => {
