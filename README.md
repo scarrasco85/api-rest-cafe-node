@@ -1,26 +1,26 @@
 
-# Cafe Backend Server with NodeJS y MongoDB
+# Cafe Server con NodeJS y MongoDB
 ---
-## What is api-rest-cafe-node? 🤔
+## ¿Qué es api-rest-cafe-node? 🤔
 
-We are talking about an Api Restfull for a cafe shop that has CRUD of users, products and categories. It also allows authentication with a database user or using your Google credentials through the Google api. It also has an image service that allows you to upload and obtain images from the server. 
-If he wants, the user can log out once he has finished working with the app.
+Hablamos de una Api Restfull para cafetería que cuenta con CRUD de usuarios, productos y categorías. Permite la autenticación con un usuario de base de datos o usando tus credenciales de Google a través de la api de Google. También cuenta con un servicio de imágenes que permite subir y obtener imágenes del servidor.
+Si lo desea, el usuario puede cerrar sesión una vez que haya terminado de trabajar con la aplicación.
 
-## Installation 🔧
+## Instalación 🔧
 
-After cloning the repository remember to install the node modules:
+Después de clonar el repositorio recuerda instalar los node modules:
 ```
 npm install
 ```
-Start the server with the command:
+Inicie el servidor con el comando:
 ```
 node server/server.js
 ```
-By default the server runs in: [](http://localhost:3000/).
-You can change it in the file 'server/congif/config.js' 
+Por defecto, el servidor se ejecuta en: [](http://localhost:3000/).
+Puedes cambiarlo en el archivo 'server/congif/config.js' 
 
 ---
-## Technologies used 🛠️
+## Tecnologías usadas 🛠️
 - HTML
 - JavaScript
 - NodeJS
