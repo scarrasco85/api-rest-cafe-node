@@ -32,24 +32,24 @@ Puedes cambiarlo en el archivo 'server/congif/config.js'
 - Postman
 - Heroku
 ---
-## Do you want to see the application running? 🚀
+## ¿Quieres ver la aplicación en ejecución? 🚀
 
-But remember that it is a backend application. In frontend it is only implemented to be able to authenticate with Google api.
+Pero recuerda que es una aplicación backend. En el frontend solo está implementado para poder autenticarse con la api de Google.
  [Click here!](https://arcane-hamlet-70748.herokuapp.com/)
 
 ---
-## Do you want to see how the application works? 📖
-You can check the documentation here and you can test it using Postman.
+## ¿Quieres ver cómo funciona la aplicación? 📖
+Puede consultar la documentación aquí y probarla utilizando Postman.
 [Click here!](https://documenter.getpostman.com/view/13054206/TVeqe7eN)
 
 ---
-## Some working samples ⚙️
-#### Create a new user
+## Ejemplos de funcionamiento ⚙️
+#### Crear un nuevo usuario
 
 ![](server/assets/Ejemplo_uso_cafe_node.png)
 ---
 
-#### User login
+#### Inicio de sesión de usuario
 
 ![](server/assets/login.png)
 ---
